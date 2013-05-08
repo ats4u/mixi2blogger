@@ -1,0 +1,273 @@
+<html>
+<head>
+<title>mixitrans</title>
+<style>
+    #pbar {
+        display:block;
+        position:absolute;
+        left:50%;
+        top:50%;
+        width : 300px;
+        height : 30px;
+        margin-top:-10px;
+        margin-left:-150px;
+    }
+    .progress-bar {
+        background-color: #1a1a1a;
+        height: 25px;
+        padding: 5px;
+        width: 350px;
+        margin: 50px;
+        -moz-border-radius: 5px;
+        -webkit-border-radius: 5px;
+        border-radius: 5px;
+        -moz-box-shadow: 0 1px 5px #000 inset, 0 1px 0 #444;
+        -webkit-box-shadow: 0 1px 5px #000 inset, 0 1px 0 #444;
+        box-shadow: 0 3px 5px #000 inset, 0 1px 0 #444;
+    }
+
+    .progress-bar span {
+        background-color: #404040;
+        display: inline-block;
+        height: 100%;
+        -moz-border-radius: 3px;
+        -webkit-border-radius: 3px;
+        border-radius: 3px;
+        -moz-box-shadow: 0 1px 0 rgba(255, 255, 255, .5) inset;
+        -webkit-box-shadow: 0 1px 0 rgba(255, 255, 255, .5) inset;
+        box-shadow: 0 1px 0 rgba(255, 255, 255, .5) inset;
+        -webkit-transition: width .4s ease-in-out;
+        -moz-transition: width .4s ease-in-out;
+        -ms-transition: width .4s ease-in-out;
+        -o-transition: width .4s ease-in-out;
+        transition: width .4s ease-in-out;
+    }
+
+    .blue span {
+        background-color: #34c2e3;
+    }
+
+    .orange span {
+          background-color: #fecf23;
+          background-image: -webkit-gradient(linear, left top, left bottom, from(#fecf23), to(#fd9215));
+          background-image: -webkit-linear-gradient(top, #fecf23, #fd9215);
+          background-image: -moz-linear-gradient(top, #fecf23, #fd9215);
+          background-image: -ms-linear-gradient(top, #fecf23, #fd9215);
+          background-image: -o-linear-gradient(top, #fecf23, #fd9215);
+          background-image: linear-gradient(top, #fecf23, #fd9215);
+    }
+
+    .green span {
+          background-color: #a5df41;
+          background-image: -webkit-gradient(linear, left top, left bottom, from(#a5df41), to(#4ca916));
+          background-image: -webkit-linear-gradient(top, #a5df41, #4ca916);
+          background-image: -moz-linear-gradient(top, #a5df41, #4ca916);
+          background-image: -ms-linear-gradient(top, #a5df41, #4ca916);
+          background-image: -o-linear-gradient(top, #a5df41, #4ca916);
+          background-image: linear-gradient(top, #a5df41, #4ca916);
+    }
+
+    .stripes span {
+        -webkit-background-size: 30px 30px;
+        -moz-background-size: 30px 30px;
+        background-size: 30px 30px;
+        background-image: -webkit-gradient(linear, left top, right bottom,
+                            color-stop(.25, rgba(255, 255, 255, .15)), color-stop(.25, transparent),
+                            color-stop(.5, transparent), color-stop(.5, rgba(255, 255, 255, .15)),
+                            color-stop(.75, rgba(255, 255, 255, .15)), color-stop(.75, transparent),
+                            to(transparent));
+        background-image: -webkit-linear-gradient(135deg, rgba(255, 255, 255, .15) 25%, transparent 25%,
+                            transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%,
+                            transparent 75%, transparent);
+        background-image: -moz-linear-gradient(135deg, rgba(255, 255, 255, .15) 25%, transparent 25%,
+                            transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%,
+                            transparent 75%, transparent);
+        background-image: -ms-linear-gradient(135deg, rgba(255, 255, 255, .15) 25%, transparent 25%,
+                            transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%,
+                            transparent 75%, transparent);
+        background-image: -o-linear-gradient(135deg, rgba(255, 255, 255, .15) 25%, transparent 25%,
+                            transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%,
+                            transparent 75%, transparent);
+        background-image: linear-gradient(135deg, rgba(255, 255, 255, .15) 25%, transparent 25%,
+                            transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%,
+                            transparent 75%, transparent);
+
+        -webkit-animation: animate-stripes 3s linear infinite;
+        -moz-animation: animate-stripes 3s linear infinite;
+    }
+
+    @-webkit-keyframes animate-stripes {
+        0% {background-position: 0 0;} 100% {background-position: 60px 0;}
+    }
+
+    @-moz-keyframes animate-stripes {
+        0% {background-position: 0 0;} 100% {background-position: 60px 0;}
+    }
+
+    .shine span {
+        position: relative;
+    }
+
+    .shine span::after {
+        content: "";
+        opacity: 0;
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        background: #fff;
+        -moz-border-radius: 3px;
+        -webkit-border-radius: 3px;
+        border-radius: 3px;
+
+        -webkit-animation: animate-shine 2s ease-out infinite;
+        -moz-animation: animate-shine 2s ease-out infinite;
+    }
+
+    @-webkit-keyframes animate-shine {
+        0% {opacity: 0; width: 0;}
+        50% {opacity: .5;}
+        100% {opacity: 0; width: 95%;}
+    }
+
+
+    @-moz-keyframes animate-shine {
+        0% {opacity: 0; width: 0;}
+        50% {opacity: .5;}
+        100% {opacity: 0; width: 95%;}
+    }
+</style>
+
+<style>
+    body { }
+    div#mainPane { display:block; margin: 10px 10px 10px 10px } 
+    div#pbarPane { display:none; position:absolute;width:100%; height:100%; left:0px;top:0px;background-color:black;opacity:0.5; z-index:0; text-align:center; vertical-align:center; }
+    #pbar {                             
+        display:none;                   
+        position:absolute;              
+        left:50%;                       
+        top:50%;                        
+        width : 300px;                  
+        height : 30px;                  
+        margin-top:-10px;               
+        margin-left:-150px;             
+    }
+    #throbber { vertical-align:middle; display:none; } 
+    #googleUserIDInput, #googleUserNameInput, #bloggerBlogID, #picasaAlbumID  { border:1px solid silver;} 
+    #accessToken { font-weight:bolder } 
+    #selectMixiDiaryList { margin-top:10px ; margin-bottom:10px ;} 
+    iframe {
+        border : 0px;
+    }
+    body : { line-height: 2em;}
+    .row1 {
+        width:200px;
+        display:inline-block;
+    }
+
+    #dialogPane {
+        display : none;
+        position:absolute;              
+        left:100px;
+        top:100px;
+        background-color : white;
+        padding : 30px;
+        border-radius: 10px 10px 10px 10px;
+
+    }
+    #dialogPaneTemplateString {
+        border : 1px solid silver;
+        width : 500px;
+        height: 100px;
+        border-radius: 10px 10px 10px 10px;
+    }
+    #dialogPaneButtonPane {
+        text-align : right;
+    }
+    #dialogPanePrefixFileName {
+        border : 1px solid silver;
+    }
+</style>
+<script src="chrome://mixi2blogger/content/reprogress.js"></script>
+<script src="chrome://mixi2blogger/content/tloop.js"></script>
+<script src="chrome://mixi2blogger/content/h2z.js"></script>
+<script src="chrome://mixi2blogger/content/dstorage.js"></script>
+<script src="chrome://mixi2blogger/content/ltype.js"></script>
+<script src="chrome://mixi2blogger/content/mixi2blogger.js"></script>
+<script>
+    function onload() {
+        initControlPanel( window );
+    }
+</script>
+</head>
+<body onload='onload()'>
+    <div id='mainPane'>
+        <div class='row1'>Googleログイン : </div>
+        <input type='button' id='login' name='bt' value='ログイン' />
+        <input type='button' id='loginRefresh' name='bt' value='リフレッシュ'/>
+        <br />
+        <div class='row1'>Googleユーザ名 : </div>
+        <input type='text'   id='googleUserNameInput' name='bt' size='50' value='' /><br/>
+        <div class='row1'>GoogleユーザID : </div>
+        <input type='text'   id='googleUserIDInput' name='bt' size='50' value='' /><br/>
+        <div class='row1'>Blogger Blog ID: </div>
+        <select id='bloggerBlogID' name='bloggerBlogID'></select><br/>
+        <div class='row1'>PicasaアルバムID: </div>
+        <select id='picasaAlbumID' name='picasaAlbumID'></select><br/>
+        <div class='row1'>Mixi ユーザ名 : </div>
+        <input type='text'   id='mixiUserIDInput' name='mixiUserIDInput' size='50' value='' /><br/>
+        <div class='row1'>対象Mixiユーザ : </div>
+        <select id='selectMixiUser' size='1'></select> <!-- options.value CMixiUser&CMixiUserInfo -->
+        <input type='button' id='reloadMixiUserButton' name='reloadMixiUserButton' value='更新' />
+        <br/>
+        <div class='row1'>対象日記・コミュ : </div>
+        <select id='selectBBS' size='1'></select><!-- options.value := CMixiUserInfo[] -->
+        <input type='button'  id='fetchBbsListButton' name='fetchBbsListButton' value='更新' />
+        <br/>
+        <input type='button'  id='fetchMixiDiaryHeaderButton' name='fetchMixiDiaryHeaderButton' value='日記の一覧をダウンロード' />
+        <select id='mixiDiaryIDListFilter' name='mixiDiaryIDListFilter' size='1' ><option value='all'>日記絞り込み=全て表示</option><option value='yet'>未ダウンロードのみ表示</option><option value='ready'>ダウンロード済みのみ表示</option></select>
+        <input type='text'   id='mixiDiaryIDListStatus' name='bt' size='40' value='' />
+        <input type='button' id='selectAll' name='btc' value='全選択' />
+        <input type='button' id='inverseSelection' name='btc' value='選択反転' />
+        <img id='throbber' src='data:image/gif;base64,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' />
+        <br/>
+        <select id='selectMixiDiaryList' name='selectMixiDiaryList' size='10' multiple></select><!-- // CMixiDiaryHeader -->
+        <br/>
+        <select id='selectSort' name='selectSort' size='1' >
+            <option value='null'>ならべかえ</option>
+            <option value='{"sort":"created","order":"pastNow"}'>作成日で並べ替える(昨日→今日)</option>
+            <option value='{"sort":"created","order":"nowPast"}'>作成日で並べ替える(今日→昨日)</option>
+            <option value='{"sort":"modified","order":"pastNow"}'>最新コメント日付で並べ替える(昨日→今日)</option>
+            <option value='{"sort":"modified","order":"nowPast"}'>最新コメント日付で並べ替える(今日→昨日)</option>
+        </select>
+        <br/>
+        <input type='button' id='editTemplate' name='btsf' value='テンプレートを編集' />
+        <input type='button' id='downloadSelected' name='btsf' value='選択された日記をmixiからダウンロード' />
+        <input type='button' id='viewSelectedAsFile' name='btsf' value='選択された日記をプレビュー' />
+        <input type='button' id='exportSelectedToBloggerAsFile' name='btsf' value='選択された日記をblogger形式で保存' />
+        <input type='button' id='viewSelectedOnMixi' name='btc' value='選択された日記をmixiで表示' />
+        <input type='button' id='clearButton' name='btc' value='消去' />
+    </div>
+    <div id='pbarPane'></div>
+    <div id='pbar' class='progress-bar green stripes shine'>
+        <span id='pbar_meter' style='width: 0%'><span>
+    </div>
+    <div id='dialogPane'>
+        <b>エクスポート設定</b><br/><br/>
+        <input id='dialogPaneShowCommentUserName' type='checkbox' value='保存'>
+        コメント者の名前を表示する<br/>
+        <input id='dialogPaneShowCommentUserURL' type='checkbox' value='保存'>
+        コメント者のリンクを表示する<br/>
+        テンプレート:<br/>
+        <textarea id='dialogPaneTemplateString'>&lt;DIARYTEXT/&gt;</textarea>
+        <br/>
+        出力ファイル名の接頭辞:<br/>
+        <input id='dialogPanePrefixFileName' type='text' value='diary-' size='10'>
+        <div id='dialogPaneButtonPane'>
+            <input id='dialogPaneCancelButton' type='button' value='中止'>
+            <input id='dialogPaneOKButton' type='button' value='保存'>
+        </div>
+    </div>
+</body>
+</html>

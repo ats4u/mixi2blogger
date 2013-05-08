@@ -1,0 +1,10 @@
+/*
+    dstorage.js 
+    Alternative object of 'localStorage' for Firefox
+    localStorage class which stores its data to file.
+
+    Author :  Ats Oka (I'm from Japan)
+    Website : http://ats.oka.nu/  https://github.com/ats4u
+    mailto : ats.creativity@gmail.com
+*/
+

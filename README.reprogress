@@ -1,0 +1,117 @@
+/*
+ * reprogress.js 
+ * Recursively Re-entrant Progress Manager
+ *
+ * Written by Ats Oka (I am from Japan)
+ * http://ats.oka.nu/
+ * ats.creativity@gmail.com
+ * (20130331.043702+0700.ZVV7i4XU1o61cPX0qwQQYg)
+ */
+
+== INTRODUCTION ==
+
+I think this library might be useful for calculating values for progress bars.
+Usually you write structured codes. That is  your codes contain nested
+function. This usually causes no problem. But if you want to say how much
+degree the process is progressed, you have to retrospect the function call tree
+and struggle back and forth with these values. This is what makes me sick
+terribly.  I hope this library will ease the pain.
+
+What I invent is : 
+
+    |>  var pro = new Pro( function(v){ console.log(v) });
+    |>  pro.enter(10);
+    |>  for ( var i=0; i<=10; i++ ) {
+    |>      pro.value(i);
+    |>  }
+    |>  pro.leave();
+
+The code above emits below :
+
+    > 0.1
+    > 0.2
+    > 0.3
+    > 0.4
+    > 0.5
+    > 0.6
+    > 0.7
+    > 0.8
+    > 0.9
+    > 1
+
+This process can be reentrant.
+
+    |>  var pro = new Pro( function(v){ console.log(v) });
+    |>  pro.enter(10);
+    |>  for ( var i=0; i<10; i++ ) {
+    |>      pro.value(i);
+    |>      pro.enter(10);
+    |>      for ( var j=0; j<10; j++ ) {
+    |>          pro.value(j);
+    |>      }
+    |>      pro.leave();
+    |>  }
+    |>  pro.value(10);
+    |>  pro.leave();
+ 
+The code above emits numbers from 0.1 to 1 with step size 0.01
+    > 0.01
+    > 0.02
+    > 0.03
+        .
+        .
+        .
+    > 0.98
+    > 0.99
+    > 1
+
+
+=== Reference ===
+
+Class
+    |> Pro
+
+    This is the only one class that this library defines.
+
+Constructor
+    |> var pro = new Pro( func );
+
+    Create a new instance of Pro.
+
+Methods
+    |> pro.enter( num /*:number||undefined*/ ) /*:undefined*/;
+
+    Enter to a block. 
+    The parameter 'num'  specifies the length of the block.
+    The 'num' parameter can be omitted.
+
+    |> pro.max( num /*:number*/ )/*:undefined*/;
+
+    Specify the length of the current block.
+
+    |> pro.value( num /*:number*/ )/*:undefined||number*/;
+
+    Notify the current progress degree.
+    The number must be equal or greater than zero and
+    less than the current block's length.
+    The parameter can be omited. If so returns the current value.
+
+
+    |> pro.leave() /*undefined*/;
+
+    Leave the current block. 
+    You should not call the method much more than the times you call the
+    enter() method. Otherwise it will throw an exception.
+
+Note :
+
+About what __pro_calc(arr) function does :
+
+    When reentrant level is 3 :
+    ( n is numerator and d is denominator. Each term represents each reentrant block. )
+
+         n1 * d2 * d3      n2 *      d3     n3              
+    n = -------------- +  -------------- + -------------- 
+         d1 * d2 * d3      d1 * d2 * d3     d1 * d2 * d3   
+
+

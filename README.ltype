@@ -1,0 +1,629 @@
+/*
+    LTYPE
+    A Very Simple Non Prototype Based Type Management System For JavaScript
+
+    Author :  Ats Oka (I am from Japan)
+    Website : http://ats.oka.nu/  https://github.com/ats4u
+    mailto : ats.creativity@gmail.com
+    Licence : BSD licence
+    Date : 25 Apr,2013
+*/
+
+1. ABSTRACT
+
+LTYPE is a type management system which offers users an interface based type
+checking system rather than common prototype based type checking systems.
+Not only can this library be used to check runtime type consistency, it can 
+also be used as a JSON SCHEMA defining system.
+
+JavaScript is not good at implementing polymorphism. This is (IMHO) because of
+JavaScript's type checking system is not interface based.  JavaScript's type
+checking system is a prototype-based type system.
+
+JavaScript's prototype-based type system only allows users to reuse predefined
+implementations. That is, it is merely inheritance of implementation.  It does
+not offer any feautures to check if a specific method is implemented on an
+object. Such feautures are very common for modern language like Java but
+JavaScript lacks the feautres. JavaScript's typing system merely checks these
+objects inheritance relationship.
+
+JavaScript also lacks abillity to define abstract functions. In order to check
+exsistance of a specific method/field on an object, many common modern languages
+often have feautures like abstract method. The abstract methods are usually
+tied to the interfaces. Since JavaScript does not offer interface based typing
+system, it is not likely easy to implement abstract functions on JavaScript.
+
+JavaScript also lacks multiple-inheritance. There are controversies which is
+caused by confusion between multiple inheritance of interfaces and multiple
+inheritance of implmentation.  In fact, JavaScript does let users to inherit
+a class from multiple classes but it merely allows users to inherit
+implementations not interfaces because JavaScript does not have interfaces.
+
+It is very important to check type consistency at runtime in order to build
+roubust systems. Lacking interface based type checking makes development by 
+JavaScript more complex.
+
+Final goal of LTYPE project is to offer an interface based runtime type
+checking system on JavaScript. And LTYPE may demonstrate that the JavaScript
+interface based type system entirely includes whole necessary functions which
+is usually implemented in systems of JSON SCHEMA.
+
+
+2. HOW THIS MODULE CAN BE USED 
+
+// It easilly messes your code up when you need to check consistency of your
+// function's arguments.
+function someComplexFunction( arg0, arg1, arg2, arg3, arg4 ) {
+    if ( typeof arg0 !='object' || arg0==null ||
+        typeof arg0.name !='string' || typeof arg0.age !='number' 
+        typeof arg0.address !='string' || typeof arg0.telno !='string' 
+        ! (/[0-9]+-[0-9]+/g).test( arg0.telno ) /* || ... */
+    ) 
+    {
+        throw new IllegalArgumentException();
+    }
+    // ...
+}
+    
+// ltype let you do it in this way :
+function someComplexFunction( arg0, arg1, arg2, arg3, arg4 ) {
+    // lcast throws an exception when the passed object is not consistent with
+    // specified type.
+    lcast( 'LPerson',  arg0 ); 
+    lcast( 'LJobInfo', arg1 ); 
+    lcast( 'string',  arg2 ); 
+    lcast( 'number',  arg3 ); 
+    lcast( 'LCurrentStatus',  arg4 ); 
+}
+
+
+
+3. HOW TO USE 
+
+3.1) LTYPEDEF-SCRIPT
+
+    // initialize.
+    var lcast = lcompile();
+
+    // lcast is a closure which takes two parameters : 
+    //     function lcast( arg_ltypedef, arg_value );
+
+    // check if (typeof {} == 'object') otherwise this throws an exception.
+    lcast( 'object', {}       ); // [OK] this won't throw any exception.
+
+    // check if (typeof 1 == 'object') otherwise this throws an exception.
+    lcast( 'object',  1       ); // [FAIL]  this throws an exception.
+
+    // check if (typeof 'HELLO'=='object') otherwise this throws an exception.
+    lcast( 'object', 'HELLO'  ); // [FAIL]  this throws an exception.
+
+    // JavaScript 'typeof' operator emits a string which corresponds the type
+    // of the passed value. Let's call it 'typeof-id' here. You can use any of
+    // typeof-id values as the lcast's first argument as following:
+    //     "undefined","function","object","boolean","string","number"
+    
+    // say 'string' ...
+    lcast( 'string', {}       ); // [FAIL]
+    lcast( 'string',  1       ); // [FAIL]
+    lcast( 'string', 'HELLO'  ); // [OK] 
+
+    // say 'number' ...
+    lcast( 'number', {}       ); // [FAIL]
+    lcast( 'number',  1       ); // [OK]
+    lcast( 'number', 'HELLO'  ); // [FAIL] 
+
+    // there are three pseudo typeof-id values : 
+    //     'any', 'null', 'array'
+
+    // 'any' matches with any type except 'undefined'.
+    lcast( 'any', undefined ); // [FAIL]
+
+    // pseudo typeof-id 'any' is useful for checking if the specific
+    // property exists on the specific object.
+    var object = { field1:'hello world' };
+    lcast( 'any', object.field1 );      // [OK] this won't throw any exception.
+    lcast( 'any', object.noSuchField ); // [FAIL]
+
+    // pseudo typeof-id 'array' matches with array values.
+    lcast( 'array', [1,2,3] ); // [OK] this won't throw any exception.
+    lcast( 'array', {}      ); // [FAIL] 
+    lcast( 'array', 1       ); // [FAIL] 
+    lcast( 'array', 'hello  ); // [FAIL] 
+
+    // pseudo typeof-id 'null' matches only if the value is null. 
+    lcast( 'null', {}         ); // [FAIL] 
+    lcast( 'null',  1         ); // [FAIL]
+    lcast( 'null', 'hello'    ); // [FAIL]
+    lcast( 'null', []         ); // [FAIL]
+    lcast( 'null', undefined  ); // [FAIL]
+    lcast( 'null', null       ); // [OK]
+
+    // Every typeof-id other than 'null' does not match with null.
+    lcast( 'object',  null ); // [FAIL]
+    lcast( 'array',   null ); // [FAIL]
+    lcast( 'number',  null ); // [FAIL]
+    lcast( 'string',  null ); // [FAIL]
+    lcast( 'null',    null ); // [OK]
+
+    // typeof-id 'object' does not match with array
+    lcast( 'object',  [] ); // [FAIL]
+
+    // typeof-id 'object' does not match with null
+    lcast( 'object',  null ); // [FAIL]
+
+Let's call this typeof-id with pseudo typeof-id extension as 'LTYPEOF-ID'.
+
+   "undefined","function","object","boolean","string","number", 
+   "any", "null", "array"
+
+The 'LTYPEOF-ID' is a part of LTYPEDEF-SCRIPT. In fact, LTYPEDEF-SCRIPT is
+a powerful script language. Not only checking its typeof-id, it is also able to use
+logical comparison operator. 
+
+    // ex)
+    lcast( 'string||null', 'hello' ); // [OK]
+    lcast( 'string||null',  null ); // [OK]
+
+The first argument of the lcast() function is treated as a LTYPEDEF-SCRIPT
+script as seen before. LTYPEDEF-SCRIPT is applied in various context in LTYPE.
+We are going to talk about this function in later chapter.
+    
+
+3.2) 'LTYPEDEF-OBJECT'
+
+You can also pass an object which contains type information instead of
+a LTYPEDEF-SCRIPT script to the lcast's first argument 'arg_ltypedef'.  Let's
+call such objects which describes the definition of the type as
+'LTYPEDEF-OBJECT' objects. 
+
+    // Pass an object to lcast()
+    lcast( { EXTENDS: 'object' }, {} ); // [OK] 
+
+    // the result above is exactly same with :
+    lcast(             'object'  , {} ); // [OK] 
+
+
+'LTYPEDEF-OBJECT' has some more advantages compared with simple
+'LTYPEDEF-SCRIPT'. Not only specifying LTYPEDEF-SCRIPT, it is also able to
+check the type consistencies of the object's fields, checking value consistency
+etc.  These feautures are invoked by giving information as properties on the
+object as below :
+
+    ex)
+    lcast( { EXTENDS  : 'object'     }, {}    ); // [OK] 
+    lcast( { FIELDS   : {i:'number'} }, {i:5} ); // [OK] 
+    lcast( { ONEOF    : [1,2,3]      }, 1     ); // [OK] 
+    lcast( { NONEOF   : [1,2,3]      }, 0     ); // [FAIL] 
+    lcast( { EXPRESSION: 'value==0'   }, 0     ); // [OK] 
+    lcast( { REGEXP   : '[0-9]'      }, '0'   ); // [OK] 
+
+Let's call these upper-cased properties on the object 'restrictions'.
+
+There are six available restrictions for the LTYPEDEF-OBJECT objects : 
+    EXTENDS, FIELDS, ONEOF, NONEOF, EXPRESSION, REGEXP 
+
+We are talking about the restrictions in the following sections.
+
+
+3.2.1) HOW TO USE EXTENDS
+
+As seen in the previous section, EXTENDS restriction works in same way as the
+lcast's first argument 'arg_ltypedef'. You can specify any LTYPEDEF-SCRIPT
+script on the EXTENDS property as you do it as the first argument
+'arg_ltypedef' of lcast.
+    
+    // Examples:                           //        | Equivalent to
+    lcast({ EXTENDS: 'object' }, {}    ); // [OK]   | lcast('object',{} ); 
+    lcast({ EXTENDS: 'object' }, 1     ); // [FAIL] | lcast('object',1 ); 
+    lcast({ EXTENDS: 'number' }, 1     ); // [OK]   | lcast('number',1 ); 
+    lcast({ EXTENDS: 'number' },"hello"); // [FAIL] | lcast('number',"hello" ); 
+    lcast({ EXTENDS: 'string' },"null" ); // [OK]   | lcast('string',"null" ); 
+    lcast({ EXTENDS: 'string' }, null  ); // [FAIL] | lcast('string', null ); 
+
+
+3.2.2) HOW TO USE FIELDS
+    // You can performe field type checking by using FIELDS restriction.
+    var ltypedef = { 
+        FIELDS: {
+            name : 'string', // you can set any LTYPEDEF-SCRIPT script.
+            age  : 'number', // you can set any LTYPEDEF-SCRIPT script.
+        }, 
+    };
+
+    lcast( ltypedef, { name : 'hello', age: 20   } ); // [OK]
+    lcast( ltypedef, { name : 'hello', age: '20' } ); // [FAIL] 
+                                                      // the value of 'age'
+                                                      // property must be
+                                                      // a number.
+
+    // FIELDS restriction also takes LTYPEDEF-OBJECT objects.
+    // That is, you can nest LTYPEDEF-OBJECT in FIELDS.
+    var ltypedef = { 
+        FIELDS: {
+            person : {
+                name : 'string',
+                age  : 'number',
+            },
+            job : {
+                company : 'string',
+                title : 'string',
+            },
+        }, 
+    };
+    lcast( ltypedef, {
+        person : { name : 'hello', age: 20  }, 
+        job : { company:'Microsoft', title : 'Cleaner' }
+    }); // [OK]
+
+
+3.2.3) HOW TO USE ONEOF 
+
+Setting an array to ONEOF property on the LTYPEDEF-OBJECT enables you to
+define enumeration types. It fails if none of them equals to the value.
+
+    // An example :
+    var ltypedef = { ONEOF : [ 'HEART', 'DIAMOND', 'SPADE', 'CLUB' ] };
+    lcast( ltypedef, 'HEART'   ); // [OK]
+    lcast( ltypedef, 'DIAMOND' ); // [OK]
+    lcast( ltypedef, 'SPADE'   ); // [OK]
+    lcast( ltypedef, 'CLUB'    ); // [OK]
+    lcast( ltypedef, 'JOKER'   ); // [FAIL]
+
+    // ONEOF can take any value:
+    var ltypedef = { ONEOF : [ NaN, Infinity, 10e+4 ] };
+    lcast( ltypedef, 0 );         // [FAIL]
+    lcast( ltypedef, NaN );       // [OK]
+    lcast( ltypedef, 'NaN' );     // [FAIL]
+    lcast( ltypedef, Infinity );  // [OK]
+    lcast( ltypedef, -Infinity ); // [FAIL]
+    lcast( ltypedef, 100000 );    // [OK]
+
+    // ONEOF can take objects, too.
+    var ltypedef = {
+        ONEOF : [
+            {
+                color : 'Red',
+                name : 'Mario',
+            },
+            {
+                color : 'Green',
+                name : 'Luigi',
+            },
+        ];
+    };
+
+    // the value must be equal with one of element in the array ONEOF.
+    lcast( ltypeof, { color:'Red', name :'Mario' } ); // [OK]
+    lcast( ltypeof, 'Mario' ); // [FAIL] 
+    lcast( ltypeof, { color:'Black', name :'Mickey' } ); // [FAIL] 
+
+
+3.2.4) HOW TO USE NONEOF 
+Setting an array to NONEOF restriction on the LTYPEDEF-OBJECT object enables
+you to exclude specific values from the definition of consistency:
+
+    // An example :
+    var ltypedef = { NONEOF : [ 'Foo', 'Bah', 'Bum' ] };
+    lcast( ltypedef, 'Foo' ); // [FAIL]
+    lcast( ltypedef, 'Bah' ); // [FAIL]
+    lcast( ltypedef, 'Bum' ); // [FAIL]
+    lcast( ltypedef, 'Go Ahead, Nuclear Reactors! Tsunami is Nothing!' ); // [OK]
+
+    // NONEOF can also take any value:
+    var ltypedef = { NONEOF : [ NaN, Infinity ] };
+    lcast( ltypedef, 0 );         // [OK]
+    lcast( ltypedef, NaN );       // [FAIL]
+    lcast( ltypedef, 'NaN' );     // [OK]
+    lcast( ltypedef, Infinity );  // [FAIL]
+    lcast( ltypedef, -Infinity ); // [OK]
+
+
+3.2.5) HOW TO USE EXPRESSION 
+
+    // EXPRESSION restriction defines the value's consistency by JavaScript scripts.
+    var ltypedef = { EXPRESSION : 'value<3' };
+    lcast( ltypedef, 0 ); // [OK]
+    lcast( ltypedef, 1 ); // [OK]
+    lcast( ltypedef, 2 ); // [OK]
+    lcast( ltypedef, 3 ); // [FAIL]
+
+    // This restriction is always successful.
+    var ltypedef = { EXPRESSION : 'true' };
+
+    // This restriction always fails.
+    var ltypedef = { EXPRESSION : 'false' };
+
+    // This restriction is successful only when the value is an array and the
+    // total value of the content is a numeric value which is less than 100:
+    var ltypedef = { 
+        EXTENDS : 'array',
+        EXPRESSION : 
+            'var sum=0;' +
+            'for ( var i=0;<value.length;i++) { sum+=value[i] }'+
+            'sum<100;',
+    };
+
+
+
+3.2.6) HOW TO USE REGEXP : pattern matching 
+
+REGEXP must be an array which contains strings.  The strings are treated as
+RegExp with 'g' option.  If none of these RegExp string matches to the value,
+it fails.
+
+    var lcast = lcompile([
+        {
+            NAME : 'LPatternTest', // Specify the type ID as 'NAME' propery.
+            REGEXP : [ '^[a-z]*$', '^[0-9]\\.[0-9][0-9]$' ],
+        }
+    ]);
+
+    lcast( 'LPatternTest', 'abc' ); // [OK]
+    lcast( 'LPatternTest', 'ABC' ); // [FAIL]
+    lcast( 'LPatternTest', '3.14' ); // [OK]
+    lcast( 'LPatternTest', '1.41' ); // [OK]
+    lcast( 'LPatternTest', '2.718281828' ); // [FAIL]
+
+
+3.3. ADVANCED USAGE with 'LTYPEDEF-SCRIPT'
+
+3.3.1) DEFINING TYPES
+
+You can register LTYPEDEF-OBJECT objects as LTYPE's standard type. These
+registered types can be referred by its LTYPEDEF-ID. 
+
+In previous sections, we discussed the role of LTYPEOF-ID which can be
+specified in LTYPEDEF-SCRIPT scripts. The registered user defined type IDs have
+same behavior as if it is newly registered LTYPEOF-ID. 
+
+Let's call the extended ID set which includes both the LTYPEOF-ID IDs and newly
+defined user type IDs as LTYPEDEF-ID.
+
+In order to register user defined type, do as following :
+
+    // Passing an array to the lcompile() function.
+    var lcast = lcompile([
+        // Each element must be a valid LTYPEDEF-OBJECT object.
+        {
+            NAME : 'LNewString', // Specify its type ID as NAME property.
+            EXTENDS: 'string',   // Our new user-defined type requires that its
+                                  // values are string values.
+        }
+    ]);
+
+    lcast( 'LNewString', 'Hello World!" ); // [OK]   is a string value.
+    lcast( 'LNewString', 3.141592       ); // [FAIL] is not a string value.
+
+
+3.3.2) Logical Operator
+
+One of the most versatile feautures in LTYPE is Type Logical Operation.
+
+    var lcast = lcompile([
+        {
+            NAME : 'LName', // Specify the type ID as 'NAME' property.
+            FIELDS : {
+                name : 'string',
+            },
+        },
+        {
+            NAME : 'LAge', // Specify the type ID as 'NAME' property.
+            FIELDS : {
+                age : 'number',
+            },
+        }
+    ]);
+
+    lcast( 'LName&&LAge', { name : 'Nicky', age : 20 }); // [OK]
+    lcast( 'LName&&LAge', { name : 'Nicky',          }); // [FAIL]
+    lcast( 'LName&&LAge', {                 age : 20 }); // [FAIL]
+    lcast( 'LName&&LAge', {                          }); // [FAIL]
+
+    lcast( 'LName||LAge', { name : 'Nicky', age : 20 }); // [OK]
+    lcast( 'LName||LAge', { name : 'Nicky',          }); // [OK]
+    lcast( 'LName||LAge', {                 age : 20 }); // [OK]
+    lcast( 'LName||LAge', {                          }); // [FAIL]
+
+
+3.3.3) EXTENDING TYPES
+
+EXTENDS restriction takes LTYPEDEF-SCRIPT. That is, it is also able to use
+type logical operation in it. This enables user to express new inheritance 
+relationship which is uncommon and unknown in modern scripting language now.
+
+I think, in most case, inheritance relationship should not be simply
+hierarchical and linear. I think this type logical operation is a new paradigm
+to implement polymorphism. I am still not sure what this is, what benefits
+it has and what disadvantages it has.
+
+    var lcast = lcompile([
+        {
+            NAME : 'RGB',
+            FIELDS : {
+                rgb : 'string',
+            },
+        },
+        {
+            NAME : 'CMYK', 
+            FIELDS : {
+                cmyk : 'string',
+            },
+        },
+        {
+            NAME : 'Picture',
+            EXTENDS : 'RGB||CMYK',
+            FIELDS : {
+                data : 'string',
+            }
+        }
+    ]);
+    lcast( 'Picture', { data : '...', rgb : '...' } ); // [OK]
+    lcast( 'Picture', { data : '...', cmyk: '...' } ); // [OK]
+    lcast( 'Picture', { data : '...', hsl : '...' } ); // [FAIL]
+
+
+
+3.3.4) ARRAY EXPRESSIONS
+
+LTYPEDEF-SCRIPT has an expressions to define type consistency of array contents.
+
+    // Put Keyword 'array of' in the begging of LTYPEDEF-SCRIPT
+    lcast( 'array of string', [ 'a','b','c' ]  ); // [OK]
+    lcast( 'array of string', [ 'a', 111,'c' ] ); // [FAIL]
+
+    // To express multi-dimensional array, double it.
+    lcast( 'array of array of string', [ 'a','b','c' ]  ); // [OK]
+    lcast( 'array of array of string', [ 'a', 111,'c' ] ); // [FAIL]
+
+    // 'array of' supports type logical operation.
+    lcast( 'array of number || string', [1,'2',3 ] ); // [OK] this checks
+                                                      // array of ( number || string )
+
+
+
+4) A Concept about Logical Operation for Type IDs
+
+In practical programming, most methods refer interfaces partially.
+Let's think about Java code below.
+
+    interface A { void doThis(); }
+    interface B { void doThat(); }
+    interface C { void doThem(); }
+    interface All extends A,B,C { }
+    
+    void exec( All a ) {
+        a.doThis();
+    }
+
+In this case, the method exec() only refers the interface A. Hence, the
+following code is enough to do it.  
+
+    void exec( A a ) {
+        a.doThis();
+    }
+
+
+But what if in this case. See following :
+
+    void exec( All a ) {
+        a.doThis();
+        a.doThat();
+    }
+
+The method does not refer interface C. There is no necessity that the method
+refers the entire interface.
+
+One of the solution is defining all set of the interfaces as below :
+
+    interface AB extends A,B {}
+    interface BC extends B,C {}
+    interface CA extends C,A {}
+    interface All extends A,B,C,AA,BC,CA {
+    }
+
+This is obviously bogus. In practical programming, there are hundreds of
+interfaces. It is almost impossible to enumerate all possible combination of
+interfaces and define all of them. ( Yes, you can also automate it by using
+bytecode generation technology but I don't prefer that idea.)
+
+There are some other solutions but none of them seem reasonable for me.
+
+    void exec( Object a ) {
+        ((A)a).doThis();
+        ((B)a).doThat();
+    }
+
+This is also a solution for that problem. This solution is widely adopted way
+as seen in JDK library especially in Swing.  This solution has a drawback. In
+this solution, there is no way to check the type consistency when it is compile
+time.
+
+
+The programming language Java has some syntax sugers in order to use in such case.
+    static <T extends A&B> void hello( T arg0 ) {
+    }
+
+By this syntax, common compilers check if the type of arg0 implements both
+A and B otherwise it fail to compile.
+
+But it only allows users to check if the specific type implements BOTH A and B.
+I think this is an instance of type logical operation in practical.  But it
+provides only AND operation. It does not provide OR operation nor any other
+operations like parenthes etc.
+
+And there is a restriction from the classfile format. A parameter in a method
+is only allowed to have single type. By using the syntax suger, most compilers
+translated the type to the single type which appears in first of the parameter
+list, then automatically cast all of callers which uses second type.  I think
+this solution is not elegant.
+
+5) OTHERS
+
+5.1) FILES
+ltype.js
+    ltype's main file.
+
+ltest.js
+    A simple test framework for JavaScript
+
+ltype_test.js
+    Defines test patterns.
+
+ltype_test.html
+    A HTML file that executes unit test.
+    
+
+5.2) ABOUT THE AUTHOR
+
+Please let me explain about dificulties of my current situation. I did not
+graduate any universities nor high-schools. I have been interested in
+programming, dialect of languages and music. I did not get good chance to study
+them formally so I have been trying to educate myself.
+
+It is very difficult to find jobs without university graduation in Japan. It is
+no matter how much high ability you have. It is just evaluated by educational
+background. I finally found a job in a major computer company in Japan as
+a subcontract. It was not very good job as it is merely building some database
+applications so that I could not use my abilities which I am good at.
+
+I decided to get outside from Japan and I moved to Thailand in middle of 2005.
+Since then I quit employed jobs and I started to develop myown designed systems.
+I also started to study some languages includes Thai, Lao with Isarn dialect by
+myself.
+
+Now it is 2013. Now I successfully acquired six languages such as English,
+Chinese, Thai, Laotian and their dialects. Especially I am interested in Isarn
+dialect which is a creole between Thai and Laosian. I can speak very influent
+Isarn. I am also interested in Cockney English dialect and Yunnan Chinese
+dialect. 
+
+The problem is, my economical situation. Now I am running out of my money.
+I have no economical support. I have no income. I have been living at very
+reasonable cost which is less than 300 dollars per a month. Even such small
+amount of money, it is really difficult to earn for me.
+
+If you could help even small amount of money, it would be great help for me.
+And if I could find a post which enables me to implement my idea for new
+systems it will be the best support for me.
+
+
+I will explain my abilities :
+    Languages which I can speak:
+        English Chinese Laosian Thai Isarn and native Japanese.
+
+    Computer Science
+        I am mainly interested in :
+            - Java
+            - JavaScript 
+            - Java Bytecode Engineering 
+                - I wrote a class loader which supports multi-inheritance
+            - Cryptography (especially implementing RSA by JavaScript)
+            - HTML5
+            - Perl BASH VIM unix things.
+
+        I am able to do but I am not interested in :
+            - Delphi 6(or lower) for 1996~2002 six years.
+            - Excel macro (2002~2004) two years.
+            - SQL 1996~2004 eight years.
+
+

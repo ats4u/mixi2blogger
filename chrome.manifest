@@ -1,0 +1,9 @@
+content     mixi2blogger     chrome/content/ 
+content     mixi2blogger     chrome/content/ contentaccessible=yes
+overlay chrome://browser/content/browser.xul     chrome://mixi2blogger/content/browser.xul
+
+locale	mixi2blogger	en-US	locale/en-US/
+
+skin	mixi2blogger	classic/1.0	skin/
+style	chrome://global/content/customizeToolbar.xul	chrome://mixi2blogger/skin/skin.css
+

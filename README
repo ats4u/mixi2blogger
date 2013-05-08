@@ -1,0 +1,126 @@
+/*
+    mixi2blogger
+    A firefox extention to convert Mixi diary to Google Blogger's posts.
+    Author :  Ats Oka (I am from Japan)
+    Website : http://ats.oka.nu/  https://github.com/ats4u
+    mailto : ats.creativity@gmail.com
+    日本語説明あり 下部参照
+*/
+
+/* How it works */
+
+This is a tool to convert each diary entries in a Japanese social network
+service "Mixi" into Google Blogger's post entries.
+
+/* Preconditions */
+
+Following accounts are necessary to run mixi2blogger :
+
+- a Mixi account
+- a Google account
+- at least one Blogger blog
+- a Picasa Album account
+
+
+/* Files */
+
+- mixi2blogger-main.js
+    Create and initialize a mixi2blogger instance.
+- mixi2blogger.js
+    The implementation of mixi2blogger.
+- dstorage.js
+    An alternative object of 'localStorage' for Firefox which stores its data
+    in specific directory.
+- h2z.js
+    A function to convert Japanese character.
+- ltype.js
+    An interface based type management system.
+- reprogress.js
+    A utility to calculate the proper position of a progress bar.
+- tloop.js
+    A function which enables loops to execute asynchronously
+
+- BUILD.sh
+    A bash script to build mixi2blogger.xpi
+
+
+
+/* Contact */
+
+website of the author
+    http://ats.oka.nu/
+mail
+    mailto:ats.creativity@gmail.com
+github
+    https://github.com/ats4u/mixi2blogger
+twitter
+    http://twitter.com/ats4u
+mixi
+    http://mixi.jp/show_profile.pl?id=459989
+
+
+==============================================================================
+
+mixi2blogger（ミクシー ツー ブロッガー）
+mixi日記をGoogleブロッガーのブログポストとして公開するFirefox拡張。
+
+このツールは、ミクシィ内で書かれた記事を、ブログ記事としてインターネットに公開
+するためのツールです。
+
+ミクシ内で書かれた記事は、ミクシ内でのみ参照が可能です。２０１０年のあしあと機
+能の廃止以前、ミクシ日記として内容の濃い日記を書いている日記ライタがたくさん存
+在しましたが、あしあと機能の廃止と共に日記を書く動機を失い、多くの日記ライタの
+更新頻度が下がったと感じた利用者も多いのではないでしょうか。それに伴って日記を
+読む為にミクシにログインしていた利用者もログインする動機を失い、日記を読む人が
+少なくなるという悪循環を感じていた利用者も多いのではないでしょうか。
+
+確かにこれは、飽くまでも利用者の主観による感想で、実際にこの感想が現実と一致し
+た事象であるかどうかは、確認のしようもありません。しかし、飽くまで筆者の主観的
+な感想としてですが、あしあと廃止以降ミクシ内に埋もれて読む人もいなくなってしま
+った日記を救い出してネット上で公開したいという需要は一定数あったのではないでし
+ょうか。何を隠そう筆者がそうだったからです。
+
+これは、一部のヘビーユーザーの戯言と言われればそれまでかも知れません。しかしネ
+ットサービスでは「１％のヘビーユーザーが全体の９９％を牽引する」というのが常で
+す。ミクシィにおいても、一部のヘビーユーザーがその他大勢のノーマルユーザーが魅
+力に感じるコンテンツを生み出していた、ということは全くなかったとは言い切れない
+のではないでしょうか。
+
+ミクシ日記は外部エクスポート（データをあるファイル形式に従ってダウンロードする
+）機能がありません。つまりデータを保存するためにはひとつひとつ手作業で保存する
+必要があります。或いは何か特殊な外部ツールを利用してデータ保存を自動化する以外
+に方法がありません。筆者がこれまで書いてきたミクシ日記は２０００に迫る件数が存
+在し、手作業で外部にコピーする事は事実上不可能でした。そこで筆者は、これを自動
+的に外部に公開するツールの必要性を切実に感じるようになりました。
+
+２０１２年末頃にミクシブロッガー変換ツールの開発に着手し２０１３年３月頃ほぼ開
+発が完了し、このツールを利用することで筆者自身の日記を公開する事に成功しました
+。この時に使ったツールに、コミュニティーをブログ記事として抽出公開する機能や、
+他人の日記を抽出公開する機能などを追加して、今回公開にこぎつけた次第です。
+
+このツール mixi2blogger は、ベータ版です。 このツールを使って経験した不具合や問
+題を報告して頂ける人を広く募集します。同時に、開発に協力して頂ける方も広く募集
+します。
+
+ソースコードは、以下のサイトで無料で公開されています。
+
+https://github.com/ats4u/mixi2blogger
+
+
+配布ライセンスは、GPL version3とします。
+
+連絡先：
+
+個人サイト
+    http://ats.oka.nu/
+メール
+    mailto:ats.creativity@gmail.com
+github
+    https://github.com/ats4u/mixi2blogger
+twitter
+    http://twitter.com/ats4u
+mixi
+    http://mixi.jp/show_profile.pl?id=459989
+        
+
+(Wed, 08 May 2013 08:27:36 +0900) 

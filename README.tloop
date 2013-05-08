@@ -1,0 +1,33 @@
+/*
+ * tloop.js 
+ * Written by Ats Oka (I am from Japan)
+ * http://ats.oka.nu/
+ * ats.creativity@gmail.com
+ * (20130331.043404+0700.OH16r8qb37HjU3RGUeLntg)
+ */
+
+This library defines function tloop(o) that executes any specified loops procedure by timer.
+
+example)
+    tloop( {
+        count : 3,
+        init : function() {
+            console.log( "init" );
+        },
+        loop : function(i) {
+            console.log( "loop(" + i + ")"  );
+        },
+        done : function() {
+            console.log( "done"  );
+        },
+    });
+
+The code above emits
+    : init
+    : loop(0)
+    : loop(1)
+    : loop(2)
+    : done
+
+The passed closures are called by setTimeout so that your browser does not freeze.
+

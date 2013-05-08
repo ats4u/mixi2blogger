@@ -1,0 +1,32 @@
+/*
+    h2z.js 
+    Half-width to Japanese Double-Width Converter
+    Author :  Ats Oka (I am from Japan)
+    Website : http://ats.oka.nu/  https://github.com/ats4u
+    mailto : ats.creativity@gmail.com
+*/
+
+BACKGROUND
+
+The Blogger's permalink feauture is immature. Recently Blogger development team
+released permalink function which enables users to decide URL of their entries.
+But it cannot be restored from exported XML files so it is really annoying.
+The only reliable way to control URL of each entry is that applying the fact that
+the Blogger has some rules to decide each entry's URL from its title.
+
+The rule is : taking first five alphabetical words from each entry's title and
+replace spaces with hyphen. This is totally useless for me because I speak
+languages that are mainly written by multilingual UNICODE characters. UNICODE
+characters have no effect for determination of each entry's URL. If there is no
+alphabetical word which is acceptable for the determination, the file name gets
+random string.
+
+Therefore I decided to append file name to each entry's title. Since most
+multilingual letters are ignored by Blogger's system  it is much easier.  The
+problem is, when any alphabetical character exists in each entry's title, it
+affects the URL determine process.
+
+My solution is : convert the problematic alphabetical characters to
+corresponding Double width UNICODE characters. This small library works for
+it.
+

@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:em="http://www.mozilla.org/2004/em-rdf#">
+
+	<Description about="urn:mozilla:install-manifest">
+		<em:id>mixi2blogger@ats.oka.nu</em:id>
+		<em:name>mixi2blogger</em:name>
+		<em:version>1.0</em:version>
+		<em:type>2</em:type>
+		<em:creator>Ats</em:creator>
+		<em:description>An Utility for Converting Mixi Diary To Blogger</em:description>
+        <em:homepageURL>http://oka-ats.blogspot.com/</em:homepageURL>
+		<em:optionsURL>chrome://mixi2blogger/content/options.xul</em:optionsURL>
+
+		<em:targetApplication>
+			<Description>
+				<em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
+				<em:minVersion>2.0</em:minVersion>
+				<em:maxVersion>20.0</em:maxVersion>
+			</Description>
+		</em:targetApplication>
+	</Description>      
+</RDF>
